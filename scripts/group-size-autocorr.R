@@ -15,6 +15,8 @@ if (!("ramboseli" %in% installed.packages()[,"Package"])) {
 }
 library(ramboseli)
 
+# This is a test comment!
+
 
 # ---- database-connections-hidden ----------------------------------------
 
