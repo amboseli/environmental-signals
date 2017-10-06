@@ -57,9 +57,9 @@ In this section, we find the group size that each individual female experienced 
 
 Steps:
 
-1. Find all life-born females born into study population
+1. Find all live-born females born into study population
 2. Create sequence of 1-month time steps for each female from date of birth until her last "monthly birthday" before death.
-3. Obtain total group size for the female on that date from the members table
+3. Obtain total group size for the female on each date from the members table
 
 ### Create age sequences
 
@@ -76,7 +76,14 @@ Steps:
 ```{r plot_experienced_group_size}
 ```
 
+<br>
+<br>
+
 ## Autocorrelation
+
+In this section, we apply an autocorrelation function to each individual female's experienced group size over her life. We're going to average this across individuals of different birth group sizes.
+
+If, for example, being born in a small group is a reliable signal that the adult social environment is likely to be a large group 10 years latter, that would appear as negative autocorrelation at lag 10 years.
 
 ### Apply ACF to individuals
 
