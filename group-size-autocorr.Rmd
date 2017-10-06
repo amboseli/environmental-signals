@@ -1,12 +1,11 @@
 ---
-title: "Autocorrelation in Environmental Signals"
+title: "Autocorrelation in Group Size"
 date: "`r Sys.Date()`"
 output:
-  html_document:
-    theme: flatly
-    highlight: kate
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
     toc: true
-    toc_float: true
 ---
 
 
