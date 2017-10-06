@@ -32,15 +32,34 @@ read_chunk('scripts/group-size-autocorr.R')
 
 ## Obtain data from babase
 
-The code below creates connections to babase tables and pulls data into R. It doesn't actually collect any data until the end so that database backend does the heavy lifting. In this approach, you're essentially specifying joins among your table connections, sending the query to the database to execute, and collecting the result.
+*This will not work with "live" babase data until you have set up a connection between R and babase!* 
+
+This entails getting a papio login, and creating an ssh tunnel from your computer to papio in putty (Windows) or terminal (Mac/Unix).
+
+## Creating the connections
+
+On my machine, I type something like this into terminal to make the ssh tunnel:
+
+`ssh -f fac13@papio.biology.duke.edu -L 2222:localhost:5432 -N`
+
+You wil obviously need to change the username before the @ symbol. If you get that sorted out, you can create a connection to babase using the code below. These lines create _connections_ to babase tables and then pull data into R. It doesn't actually collect any data until the very end so that database backend does the heavy lifting. In this approach, you're essentially specifying joins among your table connections, sending the query to the database to execute, and collecting the result.
 
 Alternatively, you can write a query in SQL, run it in babase, output to csv, and load that into R into a variable called "kids".
 
-```{r database-connections}
+```{r database-connections-hidden, echo=FALSE}
+```
+
+```{r database-connections-general, eval=FALSE}
 ```
 
 ## Experienced group size
-In this section, we
+
+In this section, we find the group size that each individual female experienced on each "monthly birthday" throughout her life.
+
+Steps:
+1. Find all life-born females born into study population
+2. Create sequence of 1-month time steps for each female from date of birth until her last "monthly birthday" before death.
+3. Obtain total group size for the female on that date from the members table
 
 ### Create age sequences
 

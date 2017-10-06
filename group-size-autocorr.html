@@ -269,16 +269,24 @@ new.packages &lt;-<span class="st"> </span>list.of.packages[<span class="op">!</
 </div>
 <div id="obtain-data-from-babase" class="section level2">
 <h2>Obtain data from babase</h2>
-<p>The code below creates connections to babase tables and pulls data into R. It doesn’t actually collect any data until the end so that database backend does the heavy lifting. In this approach, you’re essentially specifying joins among your table connections, sending the query to the database to execute, and collecting the result.</p>
+<p><em>This will not work with “live” babase data until you have set up a connection between R and babase!</em></p>
+<p>This entails getting a papio login, and creating an ssh tunnel from your computer to papio in putty (Windows) or terminal (Mac/Unix).</p>
+</div>
+<div id="creating-the-connections" class="section level2">
+<h2>Creating the connections</h2>
+<p>On my machine, I type something like this into terminal to make the ssh tunnel:</p>
+<p><code>ssh -f fac13@papio.biology.duke.edu -L 2222:localhost:5432 -N</code></p>
+<p>You wil obviously need to change the username before the @ symbol. If you get that sorted out, you can create a connection to babase using the code below. These lines create <em>connections</em> to babase tables and then pull data into R. It doesn’t actually collect any data until the very end so that database backend does the heavy lifting. In this approach, you’re essentially specifying joins among your table connections, sending the query to the database to execute, and collecting the result.</p>
 <p>Alternatively, you can write a query in SQL, run it in babase, output to csv, and load that into R into a variable called “kids”.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create ssh tunnel to papio first!!!!</span>
-
-<span class="co"># Make connection to database</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># You will need to change user to your personal babase login AND get your password</span>
+<span class="co"># One approach to doing that is through Rstudio</span>
+<span class="co"># You could also just type it in your script, but that's not recommended for security.</span>
 babase &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RPostgreSQL<span class="op">::</span><span class="kw">PostgreSQL</span>(),
                          <span class="dt">host =</span> <span class="st">&quot;localhost&quot;</span>,
                          <span class="dt">port =</span> <span class="dv">2222</span>,
-                         <span class="dt">user =</span> <span class="st">&quot;fac13&quot;</span>,
-                         <span class="dt">dbname =</span> <span class="st">&quot;babase&quot;</span>)
+                         <span class="dt">user =</span> <span class="st">&quot;YOUR_BABASE_USERNAME&quot;</span>,
+                         <span class="dt">dbname =</span> <span class="st">&quot;babase&quot;</span>,
+                         <span class="dt">password =</span> rstudioapi<span class="op">::</span><span class="kw">askForPassword</span>(<span class="st">&quot;Database password&quot;</span>))
 
 <span class="co"># Remote data sources in babase</span>
 members &lt;-<span class="st"> </span><span class="kw">tbl</span>(babase, <span class="st">&quot;members&quot;</span>)
@@ -294,7 +302,8 @@ members_local &lt;-<span class="st"> </span><span class="kw">collect</span>(memb
 </div>
 <div id="experienced-group-size" class="section level2">
 <h2>Experienced group size</h2>
-<p>In this section, we</p>
+<p>In this section, we find the group size that each individual female experienced on each “monthly birthday” throughout her life.</p>
+<p>Steps: 1. Find all life-born females born into study population 2. Create sequence of 1-month time steps for each female from date of birth until her last “monthly birthday” before death. 3. Obtain total group size for the female on that date from the members table</p>
 <div id="create-age-sequences" class="section level3">
 <h3>Create age sequences</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Find all live-born offspring with known mother</span>

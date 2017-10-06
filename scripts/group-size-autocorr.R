@@ -16,16 +16,40 @@ if (!("ramboseli" %in% installed.packages()[,"Package"])) {
 library(ramboseli)
 
 
-# ---- database-connections -----------------------------------------------
+# ---- database-connections-hidden ----------------------------------------
 
-# Create ssh tunnel to papio first!!!!
-
+# These are hidden from the Rmarkdown output
 # Make connection to database
 babase <- DBI::dbConnect(RPostgreSQL::PostgreSQL(),
                          host = "localhost",
                          port = 2222,
                          user = "fac13",
                          dbname = "babase")
+
+# Remote data sources in babase
+members <- tbl(babase, "members")
+biograph <- tbl(babase, "biograph")
+maturedates <- tbl(babase, "maturedates")
+parents <- tbl(babase, "parents")
+maternities <- tbl(babase, "maternities")
+pregs <- tbl(babase, "pregs")
+statuses <- tbl(babase, "statuses")
+
+# Local copy of members for using in joins
+members_local <- collect(members)
+
+
+# ---- database-connections-general ---------------------------------------
+
+# You will need to change user to your personal babase login AND get your password
+# One approach to doing that is through Rstudio
+# You could also just type it in your script, but that's not recommended for security.
+babase <- DBI::dbConnect(RPostgreSQL::PostgreSQL(),
+                         host = "localhost",
+                         port = 2222,
+                         user = "YOUR_BABASE_USERNAME",
+                         dbname = "babase",
+                         password = rstudioapi::askForPassword("Database password"))
 
 # Remote data sources in babase
 members <- tbl(babase, "members")
