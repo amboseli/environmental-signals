@@ -56,6 +56,7 @@ Alternatively, you can write a query in SQL, run it in babase, output to csv, an
 In this section, we find the group size that each individual female experienced on each "monthly birthday" throughout her life.
 
 Steps:
+
 1. Find all life-born females born into study population
 2. Create sequence of 1-month time steps for each female from date of birth until her last "monthly birthday" before death.
 3. Obtain total group size for the female on that date from the members table

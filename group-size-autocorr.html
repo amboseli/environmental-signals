@@ -143,7 +143,12 @@ members_local &lt;-<span class="st"> </span><span class="kw">collect</span>(memb
 <div id="experienced-group-size" class="section level2">
 <h2>Experienced group size</h2>
 <p>In this section, we find the group size that each individual female experienced on each “monthly birthday” throughout her life.</p>
-<p>Steps: 1. Find all life-born females born into study population 2. Create sequence of 1-month time steps for each female from date of birth until her last “monthly birthday” before death. 3. Obtain total group size for the female on that date from the members table</p>
+<p>Steps:</p>
+<ol style="list-style-type: decimal">
+<li>Find all life-born females born into study population</li>
+<li>Create sequence of 1-month time steps for each female from date of birth until her last “monthly birthday” before death.</li>
+<li>Obtain total group size for the female on that date from the members table</li>
+</ol>
 <div id="create-age-sequences" class="section level3">
 <h3>Create age sequences</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Find all live-born offspring with known mother</span>
