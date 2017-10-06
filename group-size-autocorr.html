@@ -281,7 +281,7 @@ grp_size_acf &lt;-<span class="st"> </span>grp_size_acf <span class="op">%&gt;%<
 <span class="st">  </span><span class="kw">select</span>(kid, bdate_grp_size, acf) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">unnest</span>() <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(kid) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">lag =</span> <span class="kw">row_number</span>())
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">lag =</span> <span class="kw">row_number</span>() <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)
 
 <span class="co"># Summarize, with set sizes and mean</span>
 grp_size_acf_summary &lt;-<span class="st"> </span>grp_size_acf <span class="op">%&gt;%</span>

@@ -203,7 +203,7 @@ grp_size_acf <- grp_size_acf %>%
   select(kid, bdate_grp_size, acf) %>%
   unnest() %>%
   group_by(kid) %>%
-  mutate(lag = row_number())
+  mutate(lag = row_number() - 1)
 
 # Summarize, with set sizes and mean
 grp_size_acf_summary <- grp_size_acf %>%
