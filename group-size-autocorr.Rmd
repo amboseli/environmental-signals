@@ -1,0 +1,71 @@
+---
+title: "Autocorrelation in Environmental Signals"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    highlight: kate
+    toc: true
+    toc_float: true
+---
+
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+
+## Global options
+opts_knit$set(root.dir = normalizePath("~/Github/amboseli/amboseli.github.io/environmental-signals"))
+opts_chunk$set(fig.path = 'plots/',
+               fig.height = 8,
+               fig.width = 12,
+	             cache = TRUE,
+               tidy = FALSE,
+               message = FALSE,
+               warning = FALSE)
+read_chunk('scripts/group-size-autocorr.R')
+```
+
+## Set up environment
+
+```{r set-up-env, message = FALSE, echo = TRUE, results = 'hide'}
+```
+
+## Obtain data from babase
+
+The code below creates connections to babase tables and pulls data into R. It doesn't actually collect any data until the end so that database backend does the heavy lifting. In this approach, you're essentially specifying joins among your table connections, sending the query to the database to execute, and collecting the result.
+
+Alternatively, you can write a query in SQL, run it in babase, output to csv, and load that into R into a variable called "kids".
+
+```{r database-connections}
+```
+
+## Experienced group size
+In this section, we
+
+### Create age sequences
+
+```{r find-kids}
+```
+
+### Match to group sizes
+
+```{r match-grp-size}
+```
+
+### Plot of experienced group size.
+
+```{r plot-experienced-grp-size}
+```
+
+## Autocorrelation
+
+### Apply ACF to individuals
+
+```{r group-size-acf}
+```
+
+### Plot of individual ACF
+
+```{r plot-group-size-acf}
+```
+
