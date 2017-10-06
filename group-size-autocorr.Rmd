@@ -73,7 +73,7 @@ Steps:
 
 ### Plot of experienced group size.
 
-```{r plot-experienced-grp-size}
+```{r plot_experienced_group_size}
 ```
 
 ## Autocorrelation
