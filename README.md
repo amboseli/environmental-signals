@@ -7,4 +7,7 @@ The idea behind this is that one model of the effects of early-life adversity, t
 It may be useful, as a starting point, to examine those potential cues to see if there's any reliable basis for predicting future states from past states. One way to do this is by quantifying autocorrelation in each "signal" for different time lags.
 
 Signals:
-[Group size](https://amboseli.github.io/environmental-signals/group-size-autocorr.html)
+
+- [Rainfall](https://amboseli.github.io/environmental-signals/climate-autocorr.html)
+
+- [Group size](https://amboseli.github.io/environmental-signals/group-size-autocorr.html)
