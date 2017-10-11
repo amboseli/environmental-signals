@@ -13,7 +13,7 @@ output:
 library(knitr)
 
 ## Global options
-opts_knit$set(root.dir = normalizePath("~/Github/amboseli/amboseli.github.io/environmental-signals"))
+opts_knit$set(root.dir = normalizePath(here::here()))
 opts_chunk$set(fig.path = 'plots/',
                fig.height = 8,
                fig.width = 12,
