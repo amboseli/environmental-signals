@@ -1,0 +1,92 @@
+---
+title: "Autocorrelation in Group Size"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    toc: true
+---
+
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+
+## Global options
+opts_knit$set(root.dir = normalizePath("~/Github/amboseli/amboseli.github.io/environmental-signals"))
+opts_chunk$set(fig.path = 'plots/',
+               fig.height = 8,
+               fig.width = 12,
+	             cache = TRUE,
+               tidy = FALSE,
+               message = FALSE,
+               warning = FALSE)
+read_chunk('scripts/climate-autocorr.R')
+```
+
+```{r set-up-env, message = FALSE, echo = TRUE, results = 'hide'}
+```
+
+<br>
+<br>
+
+## Obtain weather data from babase
+
+```{r database-connections-hidden, echo=FALSE}
+```
+
+```{r database-connections-general, eval=FALSE, echo=TRUE}
+```
+
+## Summarise rainfall data
+
+```{r prep-rainfall-data}
+```
+
+### Monthly totals, long-term monthly means, and anomalies
+
+```{r monthly-rainfall}
+```
+
+### Annual totals
+
+```{r annual-rainfall}
+```
+
+<br>
+<br>
+
+## Autocorrelation functions
+
+### Monthly rainfall totals
+
+This first example illustrates how the autocorrelation function works. It is the correlation between the time series of monthly rainfall values and itself offset by different time steps, called lags. In the plots below, significant autocorrelations appear as red-highlighted segments that extend out of the red-shaded critical region.
+
+In this example, we see the pattern that we would expect in any location _where rainfall patterns are strongly seasonal_. Specifically, we see highly significant positive autocorrelation at time lags that are multiples of 12 (12, 24, 36, ...). This is because, for any given month, rainfall patterns will be broadly similar across years during that month (e.g., July is nearly always dry in Amboseli, December is nearly always wet, etc.). We see decaying positive autocorrelation at lags close to multiples of 12 (11, 13) because adjacent months are typically part of the same season, and this relationship clearly weakens as you move farther from the multiple of 12. We also see significant negative correlation at lags that are multiples of 6. This reflects the oscillation between wet and dry seasons.
+
+None of this is particularly interesting, as it's exactly what you would expect, but it may help to clarify the results below.
+
+```{r rain-monthly-acf}
+```
+
+<br>
+<br>
+
+### Monthly rainfall anomalies
+
+Things get more interesting when we look at monthly rainfall anomalies. This is the difference between how much rain _actually_ fell in a particular month and how much rain _typically_ falls during that month, based on the long-term mean of the entire data set. In essence, we have removed seasonality from the time series, so that we're now focusing only on deviations from the normal seasonal pattern.
+
+In the plot below, we see the expected correlation of 1 at lag 0, but no strong and consistent pattern of autocorrelation at greater lags. There are a few points that just barely peek out above the critical region, but we can probably attribute these to statistical noise given the large number of lags considered.
+
+```{r rain-anomaly-acf}
+```
+
+<br>
+<br>
+
+### Total annual rainfall
+
+Finally, we look at autocorrelation in total annual rainfall. There is no significant autocorrelation at any lags > 0.
+
+```{r rain-annual-acf}
+```
