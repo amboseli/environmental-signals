@@ -151,7 +151,7 @@ n_on_census <- n_on_census %>%
 
 # Define group size categories in increments of 10
 n_on_census$bdate_grp_size <- cut(n_on_census$n_on_bdate,
-                                  breaks = seq(0, 120, 10))
+                                  breaks = seq(0, 240, 10))
 
 
 # ---- save-data ----------------------------------------------------------
@@ -190,7 +190,7 @@ grp_size_acf <- n_on_census %>%
 # Function to apply R's acf function on df
 # Only returns the vector of acf values
 get_acf <- function(df) {
-  res <- acf(df$n, plot = FALSE, na.action = na.pass, lag.max = 120)$acf[,,1]
+  res <- acf(df$n, plot = FALSE, na.action = na.pass, lag.max = 240)$acf[,,1]
 }
 
 # Apply the function to each nested df, store result in new column called acf
@@ -208,8 +208,9 @@ grp_size_acf <- grp_size_acf %>%
 # Summarize, with set sizes and mean
 grp_size_acf_summary <- grp_size_acf %>%
   group_by(bdate_grp_size, lag) %>%
-  mutate(set_size = n(),
-         mean = mean(acf, na.rm = TRUE))
+  summarise(set_size = n(),
+            mean = mean(acf, na.rm = TRUE),
+            median = median(acf, na.rm = TRUE))
 
 
 # ---- plot-group-size-acf ------------------------------------------------
@@ -217,14 +218,123 @@ grp_size_acf_summary <- grp_size_acf %>%
 ggplot() +
   geom_line(data = grp_size_acf,
             aes(x = lag / 12, y = acf, group = kid),
-            size = 0.1, alpha = 0.25, color = "gray50") +
+            size = 0.1, alpha = 0.15, color = "gray50") +
   geom_hline(yintercept = 0) +
+  geom_line(data = grp_size_acf_summary,
+            aes(x = lag / 12, y = mean, group = bdate_grp_size,
+                color = bdate_grp_size, alpha = set_size), size = 1) +
+  scale_color_manual(values = viridis::viridis(12, option = "plasma"),
+                     name = "Group Size at Birth") +
+  scale_alpha_continuous(trans = sqrt_sign_trans(), range = c(0.1, 1),
+                         guide = FALSE) +
+  scale_x_continuous(breaks = seq(0, 20, 5)) +
+  coord_cartesian(xlim = c(0, 18), ylim = c(-0.5, 1)) +
+  # facet_wrap(~bdate_grp_size) +
+  theme_journal_x2() +
+  labs(x = "Lag (years)", y = "Autocorrelation",
+       title = "Autocorrelation of experienced group size")
+
+ggplot() +
+  geom_line(data = grp_size_acf,
+            aes(x = lag / 12, y = acf, group = kid),
+            size = 0.1, alpha = 0.15, color = "gray50") +
+  geom_hline(yintercept = 0) +
+  scale_x_continuous(breaks = seq(0, 20, 5)) +
+  coord_cartesian(xlim = c(0, 18), ylim = c(-0.5, 1)) +
   geom_line(data = grp_size_acf_summary,
             aes(x = lag / 12, y = mean, group = bdate_grp_size,
                 color = bdate_grp_size), size = 1) +
   scale_color_manual(values = viridis::viridis(12, option = "plasma"),
                      name = "Group Size at Birth") +
-  # facet_wrap(~bdate_grp_size) +
   theme_journal_x2() +
+  labs(x = "Lag (years)", y = "Autocorrelation",
+       title = "Autocorrelation of experienced group size")
+
+
+# plot-group-size-acf-box -------------------------------------------------
+
+tmp <- grp_size_acf %>%
+  group_by(lag) %>%
+  summarise(median = median(acf, na.rm = TRUE))
+
+tmp <- inner_join(grp_size_acf, tmp)
+
+lag_n <- tmp %>%
+  ungroup() %>%
+  group_by(lag) %>%
+  tally()
+
+tmp1 <- tmp %>%
+  group_by(lag) %>%
+  nest() %>%
+  mutate(bp = map(data, ~ boxplot.stats(.$acf)),
+         bp = map(bp, pluck("stats"))) %>%
+  add_column(stats = list(c("lw", "lh", "med", "uh", "uw"))) %>%
+  unnest(bp, stats) %>%
+  spread(stats, bp) %>%
+  mutate(lag_m = lag / 12)
+
+m_offset <- (1/12) / 2
+
+ggplot(tmp1) +
+  geom_rect(aes(xmin = lag_m - m_offset / 2, xmax = lag_m + m_offset / 2, ymin = lw, ymax = uw),
+                fill = "gray90", color = "white", size = 0.075) +
+  geom_rect(aes(xmin = lag_m - m_offset, xmax = lag_m + m_offset, ymin = lh, ymax = uh,
+                fill = med), color = "white", size = 0.15) +
+  geom_hline(yintercept = 0, color = "white", size = 1.5) +
+  geom_point(aes(x = lag_m, y = med), fill = "black", size = 0.75,
+             shape = 21, color = "white", stroke = 0.05) +
+  geom_text(data = filter(lag_n, lag %% 12 == 0),
+            aes(x = lag / 12, y = 1.05, label = n),
+            size = 2, color = "gray50") +
+  scale_fill_gradientn(colors = brewer.pal(11, "Spectral"),
+                       breaks = c(-1, 0, 1),
+                       limits = c(-1, 1),
+                       trans = sqrt_sign_trans(),
+                       labels = expression(phantom(x) %<-% Less~Similar,
+                                           "Neutral",
+                                           More~Similar %->% phantom(x)),
+                       name = NULL,
+                       guide = guide_colorbar(title.position = "top",
+                                              ticks = FALSE,
+                                              title.hjust = 0.5,
+                                              label.hjust = 0.5)) +
+  scale_x_continuous(breaks = seq(0, 20, 5)) +
+  coord_cartesian(xlim = c(0, 18), ylim = c(-0.5, 1)) +
+  theme_journal_x2() +
+  # theme_minimal() +
+  theme(legend.key.width = unit(2, "cm"),
+        legend.key.height = unit(0.25, "cm"),
+        legend.position = "bottom") +
+  labs(x = "Lag (years)", y = "Autocorrelation",
+       title = "Autocorrelation of experienced group size")
+
+
+
+
+ggplot() +
+  geom_boxplot(data = tmp,
+               aes(x = lag / 12, y = acf, group = lag, fill = median),
+               outlier.shape = NA,
+               width = (1 / 12) - .01, size = 0.15) +
+  geom_hline(yintercept = 0) +
+  scale_fill_gradientn(colors = brewer.pal(11, "PiYG"),
+                       breaks = c(-1, 0, 1),
+                       limits = c(-1, 1),
+                       trans = sqrt_sign_trans(),
+                       labels = expression(phantom(x) %<-% Less~Similar,
+                                           "Neutral",
+                                           More~Similar %->% phantom(x)),
+                       name = NULL,
+                       guide = guide_colorbar(title.position = "top",
+                                              ticks = FALSE,
+                                              title.hjust = 0.5,
+                                              label.hjust = 0.5)) +
+  scale_x_continuous(breaks = seq(0, 20, 5)) +
+  coord_cartesian(xlim = c(0, 18), ylim = c(-0.5, 1)) +
+  theme_journal_x2() +
+  theme(legend.key.width = unit(2, "cm"),
+        legend.key.height = unit(0.25, "cm"),
+        legend.position = "bottom") +
   labs(x = "Lag (years)", y = "Autocorrelation",
        title = "Autocorrelation of experienced group size")

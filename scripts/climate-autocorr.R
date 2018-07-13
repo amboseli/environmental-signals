@@ -109,14 +109,20 @@ crit <- qnorm((1 + ci)/2)
 rain_monthly_acf$sig <- abs(rain_monthly_acf$acf) > crit/sqrt(nrow(rain_monthly))
 
 ggplot(rain_monthly_acf) +
+  # geom_segment(aes(x = lag / 12, xend = lag / 12, y = acf, yend = 0),
+  #              size = 0.25) +
+  # geom_point(aes(x = lag / 12, y = acf),
+  #            shape = 21, color = "white", size = 0.75) +
   geom_segment(aes(x = lag / 12, xend = lag / 12, y = acf, yend = 0, color = sig),
-               size = 0.25) +
+               size = 0.5) +
   geom_point(aes(x = lag / 12, y = acf, fill = sig),
-             shape = 21, color = "white", size = 0.75) +
-  geom_hline(yintercept = 0) +
+             shape = 21, color = "white", size = 1.25) +
   geom_ribbon(aes(x = lag / 12, ymin = crit/sqrt(nrow(rain_monthly)),
                   ymax = -crit/sqrt(nrow(rain_monthly))),
               fill = "firebrick", alpha = 0.2) +
+  geom_hline(yintercept = 0) +
+  coord_cartesian(ylim = c(-0.27, 1), xlim = c(0, 10)) +
+  scale_y_continuous(breaks = seq(-0.2, 1, by = 0.2)) +
   scale_fill_manual(values = c("black", "firebrick3"), guide = FALSE) +
   scale_color_manual(values = c("black", "firebrick3"), guide = FALSE) +
   theme_journal_x2() +
@@ -134,9 +140,11 @@ rain_anomaly_acf$sig <- abs(rain_anomaly_acf$acf) > crit/sqrt(nrow(rain_monthly)
 
 ggplot(rain_anomaly_acf) +
   geom_segment(aes(x = lag / 12, xend = lag / 12, y = acf, yend = 0, color = sig),
-               size = 0.25) +
+               size = 0.5) +
   geom_point(aes(x = lag / 12, y = acf, fill = sig),
-             shape = 21, color = "white", size = 0.75) +
+             shape = 21, color = "white", size = 1.25) +
+  coord_cartesian(ylim = c(-0.27, 1), xlim = c(0, 10)) +
+  scale_y_continuous(breaks = seq(-0.2, 1, by = 0.2)) +
   geom_hline(yintercept = 0) +
   geom_ribbon(aes(x = lag / 12, ymin = crit/sqrt(nrow(rain_monthly)),
                   ymax = -crit/sqrt(nrow(rain_monthly))),
@@ -159,9 +167,9 @@ rain_annual_acf$sig <- abs(rain_annual_acf$acf) > crit/sqrt(nrow(rain_annual))
 
 ggplot(rain_annual_acf) +
   geom_segment(aes(x = lag, xend = lag, y = acf, yend = 0, color = sig),
-               size = 0.5) +
+               size = 0.75) +
   geom_point(aes(x = lag, y = acf, fill = sig),
-             shape = 21, color = "white", size = 1) +
+             shape = 21, color = "white", size = 2, stroke = 0.75) +
   geom_hline(yintercept = 0) +
   geom_ribbon(aes(x = lag, ymin = crit/sqrt(nrow(rain_annual)),
                   ymax = -crit/sqrt(nrow(rain_annual))),
